@@ -11,7 +11,6 @@
 body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#fff;overflow:hidden;height:100vh;width:100vw}
 #map{width:100%;height:100vh;z-index:1}
 
-/* Header */
 .header{position:fixed;top:0;left:0;right:0;z-index:1000;background:linear-gradient(135deg,#1a1a2e,#16213e);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 20px rgba(0,0,0,.5);border-bottom:1px solid #0f3460}
 .header h1{font-size:14px;color:#e94560;display:flex;align-items:center;gap:6px}
 .header h1 span{color:#00d2ff;font-size:11px}
@@ -19,25 +18,20 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#fff;o
 .header-btns button{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:5px 10px;border-radius:20px;font-size:11px;cursor:pointer;transition:.3s}
 .header-btns button:hover{background:rgba(233,69,96,.3);border-color:#e94560}
 
-/* Status bar */
 .status-bar{position:fixed;top:52px;left:0;right:0;z-index:999;background:rgba(10,10,26,.9);padding:6px 12px;display:flex;align-items:center;justify-content:space-between;font-size:11px;border-bottom:1px solid rgba(255,255,255,.1)}
 .status-bar .code{color:#00d2ff;font-weight:700}
 .status-bar .online{color:#4caf50}
-.status-bar .offline{color:#e94560}
 
-/* Bottom panel */
 .bottom-panel{position:fixed;bottom:0;left:0;right:0;z-index:1000;background:linear-gradient(180deg,rgba(10,10,26,.95),rgba(10,10,26,1));border-top:1px solid #0f3460;padding:10px 12px;max-height:40vh;overflow-y:auto}
 .bottom-panel h3{font-size:13px;color:#e94560;margin-bottom:8px}
 .member-list{display:flex;flex-direction:column;gap:6px}
 .member-item{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.1)}
 .member-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 .member-dot.online{background:#4caf50;box-shadow:0 0 8px #4caf50}
-.member-dot.offline{background:#666}
 .member-dot.me{background:#00d2ff;box-shadow:0 0 8px #00d2ff}
 .member-name{font-size:12px;flex:1}
 .member-dist{font-size:10px;color:#888}
 
-/* Modals */
 .modal-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.active{display:flex}
 .modal{background:#1a1a2e;border:1px solid #0f3460;border-radius:16px;padding:24px;width:100%;max-width:420px;max-height:85vh;overflow-y:auto;position:relative}
@@ -47,28 +41,23 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#fff;o
 .modal input:focus{border-color:#00d2ff}
 .modal-btn{width:100%;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px;transition:.3s}
 .modal-btn.primary{background:linear-gradient(135deg,#e94560,#c23152);color:#fff}
-.modal-btn.secondary{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)}
 .modal-btn.success{background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff}
 .modal-btn:hover{opacity:.85}
 .modal .close-btn{position:absolute;top:12px;right:16px;background:none;border:none;color:#fff;font-size:22px;cursor:pointer}
 .invite-link-box{background:rgba(0,210,255,.08);border:1px solid rgba(0,210,255,.3);border-radius:10px;padding:10px;margin:10px 0;word-break:break-all;font-size:12px;color:#00d2ff}
 
-/* Invite popup */
 .invite-popup{position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;padding:20px}
 .invite-popup.active{display:flex}
 .invite-popup .modal{text-align:center;border-color:#e94560}
 .invite-popup .emoji{font-size:48px;margin-bottom:12px}
 
-/* GPS button */
 .gps-btn{position:fixed;bottom:180px;right:16px;z-index:1001;width:44px;height:44px;border-radius:50%;background:#1a1a2e;border:2px solid #00d2ff;color:#00d2ff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.5)}
 .gps-btn:hover{background:#00d2ff;color:#fff}
 
-/* Toast */
 .toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:5000;background:#4caf50;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;opacity:0;transition:.3s;pointer-events:none}
 .toast.show{opacity:1}
 .toast.error{background:#e94560}
 
-/* Leaflet custom */
 .leaflet-popup-content-wrapper{background:#1a1a2e;color:#fff;border:1px solid #0f3460;border-radius:10px}
 .leaflet-popup-tip{background:#1a1a2e}
 .leaflet-popup-content{font-size:13px;margin:8px 12px}
@@ -79,7 +68,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#fff;o
 </head>
 <body>
 
-<!-- Header -->
 <div class="header">
   <h1>⌾ Laço <span>OUXE2026</span> • REAL</h1>
   <div class="header-btns">
@@ -88,20 +76,16 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#fff;o
   </div>
 </div>
 
-<!-- Status -->
 <div class="status-bar">
   <span>Código: <span class="code">OUXE2026</span></span>
-  <span id="statusText" class="online">🟢 Conectado</span>
+  <span class="online">🟢 Tempo Real</span>
   <span><span id="onlineCount">0</span> online</span>
 </div>
 
-<!-- Map -->
 <div id="map"></div>
 
-<!-- GPS Button -->
 <button class="gps-btn" onclick="centerOnMe()" title="Centralizar em mim">◎</button>
 
-<!-- Bottom Panel -->
 <div class="bottom-panel">
   <h3>👨‍👩‍👧‍👦 Membros da Família</h3>
   <div class="member-list" id="memberList">
@@ -109,7 +93,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#fff;o
   </div>
 </div>
 
-<!-- Invite Modal -->
 <div class="modal-overlay" id="inviteModal">
   <div class="modal">
     <button class="close-btn" onclick="closeModal('inviteModal')">&times;</button>
@@ -121,7 +104,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#fff;o
   </div>
 </div>
 
-<!-- Help Modal -->
 <div class="modal-overlay" id="helpModal">
   <div class="modal">
     <button class="close-btn" onclick="closeModal('helpModal')">&times;</button>
@@ -134,7 +116,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#fff;o
   </div>
 </div>
 
-<!-- Invite Popup (quando alguém abre o link) -->
 <div class="invite-popup" id="invitePopup">
   <div class="modal">
     <div class="emoji">🎉</div>
@@ -145,15 +126,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#fff;o
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ============================================
-// CONFIGURAÇÃO GLOBAL - TUDO PRONTO, SEM CONFIGURAR NADA
-// ============================================
 const FAMILY_CODE = 'OUXE2026';
-const PANTRY_ID = 'a8f3e2b1-9c4d-4e5f-a6b7-c8d9e0f1a2b3'; // ID fixo do banco compartilhado
+const PANTRY_ID = 'a8f3e2b1-9c4d-4e5f-a6b7-c8d9e0f1a2b3';
 const API_URL = `https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}`;
 
 let map, myMarker, myLatLng;
@@ -164,7 +141,6 @@ let markers = {};
 let watchId = null;
 let syncInterval = null;
 
-// Cores para membros
 const COLORS = ['#e94560','#00d2ff','#4caf50','#ff9800','#9c27b0','#ffeb3b','#00bcd4','#ff5722','#8bc34a','#e91e63'];
 function getColor(id) {
   let hash = 0;
@@ -172,9 +148,6 @@ function getColor(id) {
   return COLORS[Math.abs(hash) % COLORS.length];
 }
 
-// ============================================
-// INICIALIZAÇÃO
-// ============================================
 document.addEventListener('DOMContentLoaded', () => {
   initMap();
   generateInviteLink();
@@ -190,9 +163,6 @@ function initMap() {
   L.control.zoom({ position: 'topright' }).addTo(map);
 }
 
-// ============================================
-// CONVITE
-// ============================================
 function generateInviteLink() {
   const url = `${window.location.origin}${window.location.pathname}?familia=${FAMILY_CODE}`;
   document.getElementById('inviteLink').textContent = url;
@@ -209,9 +179,6 @@ function shareWhatsApp() {
   window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
 }
 
-// ============================================
-// POPUP DE CONVITE (quando alguém abre o link)
-// ============================================
 function checkInvitePopup() {
   const params = new URLSearchParams(window.location.search);
   if (params.get('familia') && !myName) {
@@ -241,9 +208,6 @@ function askName() {
   }
 }
 
-// ============================================
-// INICIAR APP
-// ============================================
 function startApp() {
   myMemberId = localStorage.getItem('ouxe_memberId');
   if (!myMemberId) {
@@ -254,9 +218,6 @@ function startApp() {
   startSync();
 }
 
-// ============================================
-// GPS
-// ============================================
 function startGPS() {
   if (!navigator.geolocation) {
     showToast('GPS não suportado neste navegador', true);
@@ -288,9 +249,6 @@ function centerOnMe() {
   }
 }
 
-// ============================================
-// MARCADORES
-// ============================================
 function createMarker(lat, lng, name, color, isMe) {
   const icon = L.divIcon({
     className: '',
@@ -306,19 +264,12 @@ function createMarker(lat, lng, name, color, isMe) {
   return marker;
 }
 
-// ============================================
-// SINCRONIZAÇÃO COM BANCO COMPARTILHADO (Pantry)
-// ============================================
 function startSync() {
-  // Envia minha posição a cada 3 segundos
   syncInterval = setInterval(() => {
-    if (myLatLng) {
-      updateMyPosition();
-    }
+    if (myLatLng) updateMyPosition();
     fetchAllMembers();
   }, 3000);
   
-  // Primeira sincronização imediata
   if (myLatLng) updateMyPosition();
   fetchAllMembers();
 }
@@ -348,7 +299,6 @@ async function fetchAllMembers() {
   try {
     const response = await fetch(`${API_URL}/basket/familia_${FAMILY_CODE}`);
     if (!response.ok) {
-      // Se não existe, cria
       await fetch(`${API_URL}/basket/familia_${FAMILY_CODE}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -375,7 +325,7 @@ function updateAllMarkers() {
     const m = members[id];
     if (!m.lat || !m.lng) return;
     
-    const isOnline = m.timestamp && (now - m.timestamp < 300000); // 5 min
+    const isOnline = m.timestamp && (now - m.timestamp < 300000);
     const color = getColor(id);
     
     if (markers[id]) {
@@ -386,7 +336,6 @@ function updateAllMarkers() {
     }
   });
   
-  // Remover marcadores de membros que não existem mais
   Object.keys(markers).forEach(id => {
     if (!members[id]) {
       map.removeLayer(markers[id]);
@@ -401,7 +350,6 @@ function updateMemberList() {
   let onlineCount = 0;
   let html = '';
   
-  // Eu primeiro
   const meOnline = myLatLng ? true : false;
   if (meOnline) onlineCount++;
   html += `<div class="member-item">
@@ -410,7 +358,6 @@ function updateMemberList() {
     <div class="member-dist">${meOnline ? '🟢' : '🔴'}</div>
   </div>`;
   
-  // Outros membros
   Object.keys(members).forEach(id => {
     if (id === myMemberId) return;
     const m = members[id];
@@ -434,9 +381,6 @@ function updateMemberList() {
   document.getElementById('onlineCount').textContent = onlineCount;
 }
 
-// ============================================
-// UTILIDADES
-// ============================================
 function openModal(id) { document.getElementById(id).classList.add('active'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
@@ -447,14 +391,12 @@ function showToast(msg, isError) {
   setTimeout(() => t.className = 'toast', 3000);
 }
 
-// Fechar modais clicando fora
 document.querySelectorAll('.modal-overlay').forEach(el => {
   el.addEventListener('click', (e) => {
     if (e.target === el) el.classList.remove('active');
   });
 });
 
-// Limpar ao sair
 window.addEventListener('beforeunload', () => {
   if (syncInterval) clearInterval(syncInterval);
 });
