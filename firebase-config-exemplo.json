@@ -1,9 +1,0 @@
-{
-  "apiKey": "SUA_API_KEY",
-  "authDomain": "SEU_PROJETO.firebaseapp.com",
-  "databaseURL": "https://SEU_PROJETO-default-rtdb.firebaseio.com",
-  "projectId": "SEU_PROJETO",
-  "storageBucket": "SEU_PROJETO.appspot.com",
-  "messagingSenderId": "123456",
-  "appId": "1:123456:web:abc"
-}
