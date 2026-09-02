@@ -4,73 +4,345 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#174b3a">
-  <meta name="description" content="Laço Família — localização compartilhada com consentimento.">
-  <title>Laço Família — Localizador familiar</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <title>Laço Família OUXE2026 - Mapa Real Tempo Real</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=Fraunces:opsz,wght@9..144,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
   <style>
-    :root{--ink:#173127;--green:#174b3a;--green-2:#2d6a4f;--pale:#eef5e8;--paper:#fbfcfa;--line:#e2ebe1;--muted:#6b7c71;--orange:#be6733;--radius:22px}*{box-sizing:border-box}html,body{margin:0;min-width:320px;min-height:100%;background:var(--paper);color:var(--ink);font-family:"DM Sans",sans-serif}button,input{font:inherit}button{cursor:pointer}a{color:inherit}.app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}.sidebar{display:flex;flex-direction:column;border-right:1px solid var(--line);background:#f9fbf7;padding:22px 14px}.brand{display:flex;align-items:center;gap:12px;padding:0 8px 30px}.brand-mark{display:grid;place-items:center;width:38px;height:38px;border-radius:13px;background:var(--green);color:#e8f0d0;font-size:20px}.brand-name{font:600 19px Fraunces,serif;letter-spacing:-.04em}.brand-sub{display:block;margin-top:2px;color:#78907a;font-size:10px;font-weight:700;letter-spacing:.16em}.nav{display:grid;gap:5px}.nav button{display:flex;align-items:center;gap:12px;border:0;border-radius:13px;background:transparent;padding:12px;color:#53695c;text-align:left}.nav button.active,.nav button:hover{background:#e7f1e2;color:#1e513a}.nav-icon{width:18px;text-align:center;font-size:17px}.account{display:flex;align-items:center;gap:10px;margin-top:auto;padding:12px 7px;color:#718177;font-size:12px}.avatar{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:#e8f0e2;color:#28573f;font-weight:700}.content{min-width:0;padding:24px 26px 32px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:20px;border:1px solid var(--line);border-radius:var(--radius);background:#fff;padding:16px 20px;box-shadow:0 10px 30px rgba(29,54,41,.05)}.kicker{margin:0;color:#6b8a70;font-size:10px;font-weight:700;letter-spacing:.16em}.title{margin:3px 0 0;font:600 27px Fraunces,serif;letter-spacing:-.045em}.top-actions{display:flex;align-items:center;gap:10px}.pill,.status{display:inline-flex;align-items:center;gap:7px;border-radius:999px;background:var(--pale);padding:8px 12px;color:#286044;font-size:12px;font-weight:600}.outline{border:1px solid #c8d9ca;border-radius:12px;background:white;padding:10px 14px;color:#295242;font-weight:600}.outline:hover{background:#f1f7ed}.layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px}.map-card{position:relative;min-height:650px;overflow:hidden;border:1px solid var(--line);border-radius:var(--radius);background:#eaf1e7;box-shadow:0 12px 38px rgba(29,54,41,.07)}#map{position:absolute;inset:0}.map-tools{position:absolute;z-index:500;top:16px;left:16px;right:16px;max-width:570px}.search{display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.85);border-radius:16px;background:rgba(255,255,255,.96);padding:7px 8px;box-shadow:0 12px 30px rgba(24,48,39,.14)}.search span{padding-left:5px;color:#607368}.search input{min-width:0;flex:1;border:0;outline:0;background:transparent;padding:7px;color:var(--ink)}.primary{border:0;border-radius:11px;background:var(--green);padding:10px 15px;color:#fff;font-weight:600}.primary:hover{background:#103b2c}.chips{display:flex;gap:7px;overflow:auto;margin-top:8px;padding-bottom:3px}.chip{white-space:nowrap;border:1px solid rgba(255,255,255,.8);border-radius:999px;background:rgba(255,255,255,.94);padding:8px 11px;color:#315244;font-size:12px;box-shadow:0 4px 12px rgba(29,54,41,.07)}.chip:hover{background:#eaf2e6}.destination{position:absolute;z-index:500;bottom:18px;left:18px;right:18px;max-width:420px;border:1px solid rgba(255,255,255,.8);border-radius:18px;background:rgba(255,255,255,.96);padding:15px;box-shadow:0 14px 34px rgba(24,48,39,.16)}.destination h3{margin:0;font-size:14px}.destination p{margin:4px 0 0;color:#61736a;font-size:12px;line-height:1.5}.destination-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.side{display:grid;align-content:start;gap:16px}.panel{border:1px solid var(--line);border-radius:var(--radius);background:#fff;box-shadow:0 10px 30px rgba(29,54,41,.04);overflow:hidden}.panel-head{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #eef2ed;padding:17px 18px}.panel-head h2{margin:0;font-size:15px}.panel-head p{margin:4px 0 0;color:#708075;font-size:11px}.count{font:500 25px Fraunces,serif;color:var(--green-2)}.sharing{border-color:#dce9dd;background:#f7faf4;padding:18px}.sharing .panel-head{border:0;padding:0}.sharing-copy{margin:5px 0 0;color:#63776a;font-size:12px;line-height:1.55}.switch{position:relative;width:42px;height:24px;border:0;border-radius:20px;background:#ced8cf;padding:0}.switch:after{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;content:"";transition:.18s}.switch.on{background:var(--green)}.switch.on:after{left:21px}.sharing-status{display:flex;align-items:center;gap:7px;margin-top:14px;border-radius:12px;background:#dcebd8;padding:9px 10px;color:#245439;font-size:11px;font-weight:600}.member-list{display:grid}.member{display:flex;align-items:center;gap:11px;width:100%;border:0;border-bottom:1px solid #eef2ed;background:#fff;padding:14px 18px;text-align:left}.member:last-child{border-bottom:0}.member:hover,.member.selected{background:#f0f6ec}.member-avatar{display:grid;place-items:center;width:39px;height:39px;flex:none;border-radius:50%;color:#fff;font-weight:700}.member-body{min-width:0;flex:1}.member-name{margin:0;overflow:hidden;font-size:13px;font-weight:700;text-overflow:ellipsis;white-space:nowrap}.member-status{margin:3px 0 0;color:#4f685a;font-size:11px;font-weight:600}.member-time{margin:3px 0 0;color:#718177;font-size:10px}.dot{width:8px;height:8px;border-radius:50%;background:#d3d9d3}.dot.live{background:#4aa36e}.consent-note{margin:0 18px 18px;border-radius:12px;background:#f2f6f0;padding:11px;color:#64756a;font-size:11px;line-height:1.5}.hidden{display:none!important}.leaflet-container{font-family:"DM Sans",sans-serif}.leaflet-control-zoom a{color:var(--green)!important}.member-marker{display:grid;place-items:center;width:42px;height:42px;border:3px solid white;border-radius:50%;background:var(--marker);color:white;font-weight:700;box-shadow:0 7px 18px rgba(23,75,58,.25)}.destination-marker{display:grid;place-items:center;width:38px;height:38px;border:3px solid white;border-radius:12px 12px 12px 2px;background:var(--orange);color:white;font-size:19px;box-shadow:0 8px 16px rgba(120,59,29,.28);transform:rotate(-45deg)}.destination-marker span{transform:rotate(45deg)}.mobile-menu{display:none;border:0;background:transparent;color:var(--green);font-size:22px}.toast{position:fixed;z-index:1000;right:20px;bottom:20px;max-width:330px;border:1px solid #d7e5d5;border-radius:14px;background:#173d2f;padding:13px 15px;color:#fff;font-size:12px;box-shadow:0 12px 30px rgba(23,61,47,.25)}@media(max-width:980px){.app{grid-template-columns:1fr}.sidebar{position:fixed;z-index:900;top:0;bottom:0;left:0;width:250px;transform:translateX(-100%);transition:transform .2s;box-shadow:15px 0 35px rgba(23,49,39,.12)}.sidebar.open{transform:translateX(0)}.mobile-menu{display:block}.content{padding:14px}.layout{grid-template-columns:1fr}.map-card{min-height:600px}.side{grid-template-columns:1fr 1fr}.sharing{grid-column:1/-1}}@media(max-width:620px){.topbar{align-items:flex-start;padding:14px}.top-actions{flex-wrap:wrap;justify-content:flex-end}.top-actions .outline{padding:9px 10px}.title{font-size:23px}.layout{display:block}.map-card{min-height:560px;border-radius:18px}.side{display:grid;grid-template-columns:1fr;margin-top:14px}.sharing{grid-column:auto}.map-tools{top:10px;left:10px;right:10px}.destination{bottom:10px;left:10px;right:10px}.destination-actions{grid-template-columns:1fr}.account{padding-bottom:20px}}
+    :root{--green:#174b3a;--line:#e2ebe1;--muted:#6b7c71;--orange:#be6733;--radius:20px}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#fbfcfa;color:#173127;font-family:"DM Sans",sans-serif}
+    .app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+    .sidebar{border-right:1px solid var(--line);background:#f9fbf7;padding:20px 14px;display:flex;flex-direction:column;gap:18px}
+    .brand{display:flex;gap:10px;align-items:center}
+    .brand-mark{width:40px;height:40px;border-radius:12px;background:var(--green);color:#e8f0d0;display:grid;place-items:center;font-size:22px}
+    .brand-name{font:600 20px Fraunces,serif;letter-spacing:-.03em}
+    .brand-sub{font-size:10px;letter-spacing:.16em;color:#6b7c71;font-weight:700}
+    .nav{display:grid;gap:6px}
+    .nav button{display:flex;gap:10px;align-items:center;border:0;background:transparent;padding:12px 12px;border-radius:12px;text-align:left;color:#53695c;cursor:pointer;font-weight:600}
+    .nav button.active{background:#e7f1e2;color:#1e513a}
+    .content{padding:18px;min-width:0}
+    .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border:1px solid var(--line);background:#fff;border-radius:var(--radius);padding:14px 18px;margin-bottom:14px}
+    .pill{background:#dcfce7;border:1px solid #bbf7d0;color:#166534;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;display:flex;gap:6px;align-items:center}
+    .live-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;animation:pulse 1.5s infinite}
+    @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.4);opacity:.6}100%{transform:scale(1)}}
+    .layout{display:grid;grid-template-columns:1fr 360px;gap:14px}
+    .map-card{position:relative;min-height:72vh;height:700px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#dbe8d5}
+    #map{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+    .map-tools{position:absolute;z-index:500;top:12px;left:12px;right:12px;max-width:520px}
+    .search{display:flex;gap:6px;background:rgba(255,255,255,.97);border-radius:14px;padding:6px;border:1px solid #fff;box-shadow:0 8px 20px rgba(0,0,0,.12)}
+    .search input{flex:1;border:0;outline:0;background:transparent;padding:9px;font-size:14px}
+    .primary{border:0;background:var(--green);color:#fff;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+    .primary:hover{background:#103b2c}
+    .outline{border:1px solid #c8d9ca;background:#fff;border-radius:10px;padding:9px 12px;cursor:pointer;font-weight:600}
+    .panel{border:1px solid var(--line);border-radius:var(--radius);background:#fff;overflow:hidden}
+    .panel-head{padding:14px 16px;border-bottom:1px solid #eef2ed;display:flex;justify-content:space-between;align-items:center}
+    .member-list{display:grid}
+    .member{display:flex;gap:10px;align-items:center;padding:12px 16px;border-bottom:1px solid #eef2ed;background:#fff;width:100%;border-left:0;border-right:0;border-top:0;text-align:left;cursor:pointer}
+    .member:hover{background:#f0f6ec}.member.selected{background:#e7f1e2}
+    .member-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;flex:none;font-size:14px}
+    .member-body{flex:1;min-width:0}.member-name{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.member-time{font-size:11px;color:var(--muted);margin-top:2px}
+    .delete-btn{width:28px;height:28px;border-radius:8px;border:1px solid #f0c0c0;background:#fff5f5;color:#a33;cursor:pointer;display:grid;place-items:center}
+    .family-box{display:grid;gap:10px;padding:14px 16px}
+    .family-box input{border:1px solid var(--line);border-radius:10px;padding:11px;font-weight:600}
+    .family-box input.code{letter-spacing:.12em;text-transform:uppercase;font-weight:800;text-align:center;font-size:16px;background:#f0f6ec}
+    .switch{width:44px;height:26px;border-radius:20px;background:#ced8cf;border:0;position:relative;cursor:pointer}
+    .switch:after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.18s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+    .switch.on{background:var(--green)}.switch.on:after{left:21px}
+    .destination{position:absolute;z-index:600;bottom:16px;left:16px;right:16px;max-width:420px;background:rgba(255,255,255,.98);border-radius:16px;padding:14px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+    .hidden{display:none!important}
+    .toast{position:fixed;right:16px;bottom:16px;background:#173d2f;color:#fff;padding:12px 14px;border-radius:12px;font-size:12px;z-index:9999;max-width:340px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+    .member-marker{width:44px;height:44px;border-radius:50%;border:3px solid #fff;display:grid;place-items:center;color:#fff;font-weight:800;box-shadow:0 6px 16px rgba(0,0,0,.25);font-size:15px}
+    .invite-modal{position:fixed;inset:0;z-index:2000;background:rgba(23,61,47,.5);backdrop-filter:blur(7px);display:grid;place-items:center;padding:16px}
+    .invite-card{width:100%;max-width:440px;background:#fff;border-radius:22px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.35);border:1px solid var(--line)}
+    .invite-card h2{margin:0 0 6px;font:600 22px Fraunces,serif}
+    .code-big{font:800 30px "DM Sans",monospace;letter-spacing:.18em;text-align:center;background:#f0f6ec;border:1px dashed #b9d8bc;border-radius:12px;padding:14px;margin:14px 0;color:var(--green)}
+    .link-box{word-break:break-all;background:#f9fbf7;border:1px solid var(--line);border-radius:10px;padding:11px;font-size:11px;font-family:monospace}
+    .empty{padding:26px 18px;text-align:center;color:var(--muted);font-size:13px;line-height:1.5}
+    @media(max-width:950px){.app{grid-template-columns:1fr}.layout{grid-template-columns:1fr}.map-card{height:62vh;min-height:520px}.sidebar{position:fixed;z-index:900;top:0;left:0;bottom:0;width:270px;transform:translateX(-100%);transition:.22s;box-shadow:10px 0 30px rgba(0,0,0,.15)}.sidebar.open{transform:translateX(0)}}
   </style>
 </head>
 <body>
-  <div class="app">
-    <aside id="sidebar" class="sidebar">
-      <div class="brand"><div class="brand-mark">⌾</div><div><div class="brand-name">Laço</div><span class="brand-sub">FAMÍLIA</span></div></div>
-      <nav class="nav" aria-label="Navegação principal">
-        <button class="active" data-view="mapa"><span class="nav-icon">⌖</span>Mapa</button>
-        <button data-view="familia"><span class="nav-icon">♧</span>Família</button>
-        <button data-view="privacidade"><span class="nav-icon">♢</span>Privacidade</button>
-      </nav>
-      <div class="account"><div class="avatar">V</div><div><strong>Visitante</strong><br><span>Modo HTML estático</span></div></div>
-    </aside>
-    <main class="content">
-      <header class="topbar"><div style="display:flex;align-items:center;gap:10px"><button class="mobile-menu" id="menuBtn" aria-label="Abrir menu">☰</button><div><p class="kicker">CÍRCULO FAMILIAR</p><h1 class="title">Minha família</h1></div></div><div class="top-actions"><span class="pill">● <span id="mapCount">3 no mapa</span></span><button class="outline" data-view="privacidade">♢ Privacidade</button></div></header>
-      <section id="view-mapa" class="layout">
-        <div class="map-card">
-          <div id="map" aria-label="Mapa da família"></div>
-          <div class="map-tools"><form id="searchForm" class="search"><span>⌕</span><input id="searchInput" autocomplete="off" placeholder="Buscar endereço, empresa ou serviço" aria-label="Buscar destino"><button class="primary" type="submit">Buscar</button></form><div class="chips"><button class="chip" data-search="Posto de combustível">Posto de combustível</button><button class="chip" data-search="Hospital">Hospital</button><button class="chip" data-search="UPA">UPA</button><button class="chip" data-search="Shopping">Shopping</button></div></div>
-          <div id="destination" class="destination hidden"></div>
+<div class="app">
+  <aside id="sidebar" class="sidebar">
+    <div class="brand"><div class="brand-mark">⌾</div><div><div class="brand-name">Laço</div><div class="brand-sub">OUXE2026 • REAL</div></div></div>
+    <nav class="nav">
+      <button class="active" data-view="mapa">⌖ Mapa ao vivo</button>
+      <button data-view="familia">♧ Gerar convite</button>
+      <button data-view="config">⚙️ Firebase</button>
+      <button data-view="ajuda">❓ Ajuda</button>
+    </nav>
+    <div style="margin-top:auto;padding:10px 2px;font-size:11px;color:var(--muted);display:grid;gap:6px">
+      <div id="connStatus">🔴 Sem Firebase</div>
+      <div>Código: <strong>OUXE2026</strong></div>
+      <div id="myId" style="font-family:monospace;word-break:break-all"></div>
+      <button class="outline" onclick="localStorage.clear(); location.reload()" style="font-size:11px;margin-top:6px">Limpar tudo (reset)</button>
+    </div>
+  </aside>
+  <main class="content">
+    <header class="topbar">
+      <div><div style="font-size:10px;letter-spacing:.16em;font-weight:800;color:#6b7c71">OUXE2026 • CONVITE AUTOMÁTICO • REAL</div><h1 style="margin:4px 0 0;font:600 22px Fraunces,serif">Família OUXE2026 no mapa</h1></div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="pill"><span class="live-dot"></span><span id="mapCount">0 ao vivo</span></span>
+        <button class="outline" id="menuBtn">☰</button>
+        <button class="primary" id="locateBtn">◎ Eu</button>
+      </div>
+    </header>
+
+    <section id="view-mapa" class="layout">
+      <div class="map-card">
+        <div id="map"></div>
+        <div class="map-tools"><form id="searchForm" class="search"><input id="searchInput" placeholder="Buscar endereço real..."><button class="primary" type="submit">Buscar</button></form></div>
+        <div id="destination" class="destination hidden"></div>
+      </div>
+      <div style="display:grid;gap:12px;align-content:start">
+        <div class="panel">
+          <div class="panel-head"><div><strong>Família OUXE2026</strong><div style="font-size:11px;color:var(--muted)">Todos com mesmo código se veem</div></div><span class="pill" id="onlineCount">0 online</span></div>
+          <div class="family-box">
+            <input id="familyCode" class="code" value="OUXE2026" maxlength="12">
+            <div style="display:flex;gap:8px"><input id="myName" placeholder="Seu nome real" style="flex:1"><button class="primary" id="addMeBtn">+ Entrar no mapa</button></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding-top:4px"><span style="font-size:12px;font-weight:600">GPS ao vivo</span><button id="sharingSwitch" class="switch"></button></div>
+            <div id="myLoc" style="font-size:11px;font-family:monospace;color:var(--muted);min-height:18px"></div>
+          </div>
         </div>
-        <aside class="side">
-          <section class="panel sharing"><div class="panel-head"><div><h2>Seu compartilhamento</h2><p class="sharing-copy">A localização só é enviada depois da sua autorização.</p></div><button id="sharingSwitch" class="switch" role="switch" aria-checked="false" aria-label="Ativar compartilhamento"></button></div><div id="sharingStatus" class="sharing-status">○ Compartilhamento desativado</div></section>
-          <section class="panel"><div class="panel-head"><div><h2>Membros no mapa</h2><p>Selecione um membro para ir até a rua dele</p></div><span id="memberCount" class="count">3</span></div><div id="memberList" class="member-list"></div><p class="consent-note">Somente membros autorizados são exibidos. Cada pessoa pode revogar o acesso quando quiser.</p></section>
-        </aside>
-      </section>
-      <section id="view-familia" class="panel hidden" style="padding:24px"><p class="kicker">CÍRCULO FAMILIAR</p><h2 class="title">Membros e convites</h2><p style="color:var(--muted);line-height:1.6">Nesta versão estática, você pode testar a interface localmente. Para sincronização segura entre dispositivos, conecte este front-end ao backend do projeto original ou a um serviço de autenticação e banco.</p><button class="primary" id="inviteBtn">Gerar convite de demonstração</button><div id="inviteResult" style="margin-top:14px;color:var(--green);font-family:'DM Mono',monospace"></div></section>
-      <section id="view-privacidade" class="panel hidden" style="padding:24px"><p class="kicker">CENTRO DE PRIVACIDADE</p><h2 class="title">Você decide quem vê você.</h2><p style="max-width:620px;color:var(--muted);line-height:1.6">O modo HTML salva apenas preferências neste navegador. Ative o botão de compartilhamento para consentir com a demonstração de envio de localização. A versão com servidor mantém essa regra por membro e entre dispositivos.</p><div class="panel" style="margin-top:20px;padding:16px;background:#f7faf4"><strong>Compartilhamento neste dispositivo</strong><div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px"><span id="privacyText" style="color:var(--muted);font-size:13px">Desativado</span><button id="privacySwitch" class="switch" role="switch" aria-checked="false" aria-label="Ativar compartilhamento nesta tela"></button></div></div></section>
-    </main>
+        <div class="panel">
+          <div class="panel-head"><strong>Membros reais</strong><span id="memberCount" style="font-weight:800">0</span></div>
+          <div id="memberList" class="member-list"></div>
+        </div>
+        <div class="panel" style="padding:12px 16px;background:#f7faf4">
+          <strong style="font-size:13px">🔗 Link de convite automático OUXE2026</strong>
+          <div id="inviteLinkPreview" class="link-box" style="margin-top:8px"></div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="primary" id="copyLinkBtn" style="flex:1">📋 Copiar link</button>
+            <button class="outline" id="shareWhatsBtn" style="flex:1">💬 WhatsApp</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-familia" class="panel hidden" style="padding:22px">
+      <h2 style="font-family:Fraunces,serif;margin:0">Gerar convite automático</h2>
+      <p style="color:var(--muted);font-size:14px;line-height:1.6">Seu código fixo é <strong>OUXE2026</strong>. Envie o link abaixo. Quem abrir, já entra automaticamente no seu mapa.</p>
+      <div style="max-width:500px;margin-top:16px;display:grid;gap:12px">
+        <div class="code-big">OUXE2026</div>
+        <div id="fullLinkDisplay" class="link-box"></div>
+        <div style="display:flex;gap:8px">
+          <button class="primary" id="copyFullLinkBtn" style="flex:1">📋 Copiar link OUXE2026</button>
+          <button class="outline" id="generateNewBtn" style="flex:1">Gerar outro código</button>
+        </div>
+        <div style="margin-top:8px;padding:12px;background:#fffbeb;border:1px solid #fde68a;border-radius:12px;font-size:12px">Quando a pessoa abre o link, aparece um popup para ela digitar o nome e já cai no mapa de todos, em tempo real.</div>
+      </div>
+    </section>
+
+    <section id="view-config" class="panel hidden" style="padding:22px">
+      <h2 style="font-family:Fraunces,serif;margin:0">Config Firebase (para tempo real entre celulares)</h2>
+      <p style="color:var(--muted);font-size:13px;line-height:1.6">1. Crie projeto em <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a><br>2. Ative <b>Realtime Database</b> em modo teste<br>3. Copie o firebaseConfig e cole abaixo. Sem isso funciona só local.</p>
+      <textarea id="firebaseConfigInput" style="width:100%;height:130px;border-radius:10px;padding:10px;font-family:monospace;font-size:11px;border:1px solid var(--line)" placeholder='{"apiKey":"...","authDomain":"...","databaseURL":"https://SEU-PROJETO.firebaseio.com","projectId":"..."}'></textarea>
+      <button class="primary" id="saveFirebaseBtn" style="margin-top:10px">Salvar e conectar</button>
+      <div id="firebaseStatus" style="margin-top:8px;font-size:12px"></div>
+      <pre style="margin-top:14px;background:#f3f4f6;padding:10px;border-radius:8px;font-size:11px;overflow:auto">Regras para teste:
+{
+  "rules": { ".read": true, ".write": true }
+}</pre>
+    </section>
+
+    <section id="view-ajuda" class="panel hidden" style="padding:22px">
+      <h2 style="font-family:Fraunces,serif;margin:0">Como subir no GitHub</h2>
+      <ol style="line-height:1.8;color:var(--muted);font-size:14px">
+        <li>Crie repositório no GitHub (ex: laco-ouxe2026)</li>
+        <li>Faça upload de <b>todos</b> os arquivos desta pasta</li>
+        <li>Vá em Settings → Pages → Source: main / root → Save</li>
+        <li>Seu link será: <code>https://SEUUSER.github.io/laco-ouxe2026/?familia=OUXE2026</code></li>
+        <li>Envie esse link no WhatsApp da família</li>
+      </ol>
+      <p style="font-size:13px">Se o mapa não aparecer, limpe o cache (Ctrl+F5) e permita GPS. O contador de 3 membros era bug do localStorage antigo - já corrigi, agora começa em 0.</p>
+    </section>
+  </main>
+</div>
+
+<div id="inviteModal" class="invite-modal hidden">
+  <div class="invite-card">
+    <h2>Você foi convidado! 🎉</h2>
+    <p>Entre na família <strong>OUXE2026</strong> no mapa em tempo real.</p>
+    <div class="code-big" id="inviteModalCode">OUXE2026</div>
+    <input id="inviteName" placeholder="Digite seu nome real" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:15px">
+    <button class="primary" id="inviteJoinBtn" style="width:100%;margin-top:10px;padding:12px;font-size:15px">📍 Entrar automaticamente no mapa</button>
+    <button class="outline" id="inviteCloseBtn" style="width:100%;margin-top:8px">Depois</button>
+    <div style="margin-top:10px;font-size:11px;color:var(--muted);text-align:center">GPS real apenas com seu consentimento. Código OUXE2026.</div>
   </div>
-  <div id="toast" class="toast hidden" role="status"></div>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-  <script>
-    const defaultCenter=[-23.55052,-46.633308];
-    const members=[
-      {id:1,name:'Ana',color:'#2d6a4f',lat:-23.55052,lng:-46.633308,status:'Localização disponível',time:'Agora',icon:'♡'},
-      {id:2,name:'Carlos',color:'#356ae6',lat:-23.5678,lng:-46.6462,status:'Localização disponível',time:'Há 2 min',icon:'●'},
-      {id:3,name:'Marina',color:'#a94848',lat:-23.5384,lng:-46.6585,status:'Atualização recente',time:'Há 5 min',icon:'✦'}
-    ];
-    const saved=JSON.parse(localStorage.getItem('laco-html-state')||'{}');
-    let sharing=Boolean(saved.sharing), selectedId=null, destinationMarker=null, routeLine=null, destination=null;
-    const map=L.map('map',{zoomControl:true}).setView(defaultCenter,12);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:19}).addTo(map);
-    const memberMarkers=new Map();
-    const makeMemberIcon=m=>L.divIcon({className:'',html:`<div class="member-marker" style="--marker:${m.color}">${m.icon}</div>`,iconSize:[42,42],iconAnchor:[21,21]});
-    members.forEach(m=>{const marker=L.marker([m.lat,m.lng],{icon:makeMemberIcon(m),title:`Ir até ${m.name}`}).addTo(map);marker.on('click',()=>focusMember(m.id));memberMarkers.set(m.id,marker)});
-    function toast(text){const el=document.getElementById('toast');el.textContent=text;el.classList.remove('hidden');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>el.classList.add('hidden'),3600)}
-    function formatDestination(d){return `<div style="display:flex;gap:10px;align-items:flex-start"><div style="font-size:22px;color:var(--orange)">⌖</div><div style="flex:1"><h3>${d.name}</h3><p>${d.address||'Localização atual do membro autorizado'}</p></div><button class="outline" style="padding:5px 9px" onclick="clearDestination()" aria-label="Fechar">×</button></div><div class="destination-actions"><button class="primary" onclick="drawRoute()">⌁ Traçar rota</button><button class="outline" onclick="openNavigation()">↗ Navegar</button></div>`}
-    function showDestination(d){destination=d;const el=document.getElementById('destination');el.innerHTML=formatDestination(d);el.classList.remove('hidden');if(destinationMarker)map.removeLayer(destinationMarker);destinationMarker=L.marker([d.lat,d.lng],{icon:L.divIcon({className:'',html:'<div class="destination-marker"><span>⌖</span></div>',iconSize:[38,38],iconAnchor:[19,19]})}).addTo(map)}
-    function reverseGeocode(lat,lng,callback){fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,{headers:{'Accept-Language':'pt-BR'}}).then(r=>r.ok?r.json():null).then(data=>callback(data&&data.display_name?data.display_name:'Rua não identificada pelo serviço de mapas')).catch(()=>callback('Rua não identificada pelo serviço de mapas'))}
-    function focusMember(id){const m=members.find(x=>x.id===id);if(!m)return;selectedId=id;renderMembers();map.setView([m.lat,m.lng],17,{animate:true});reverseGeocode(m.lat,m.lng,address=>showDestination({name:m.name,address,lat:m.lat,lng:m.lng}))}
-    function clearDestination(){destination=null;if(destinationMarker){map.removeLayer(destinationMarker);destinationMarker=null}if(routeLine){map.removeLayer(routeLine);routeLine=null}document.getElementById('destination').classList.add('hidden')}
-    function openNavigation(){if(!destination)return;window.open(`https://www.google.com/maps/dir/?api=1&destination=${destination.lat},${destination.lng}`,'_blank','noopener,noreferrer')}
-    function drawRoute(){if(!destination){return}const start=sharing&&navigator.geolocation?null:[defaultCenter[0],defaultCenter[1]];if(start===null){navigator.geolocation.getCurrentPosition(pos=>drawFrom([pos.coords.latitude,pos.coords.longitude]),()=>drawFrom(defaultCenter),{enableHighAccuracy:true,timeout:8000});}else drawFrom(start);function drawFrom(origin){if(routeLine)map.removeLayer(routeLine);routeLine=L.polyline([origin,[destination.lat,destination.lng]],{color:'#174b3a',weight:5,dashArray:'10 8',opacity:.85}).addTo(map);map.fitBounds(routeLine.getBounds(),{padding:[70,70]});toast('Rota visualizada. Use “Navegar” para abrir o trajeto no aplicativo de mapas.')}}
-    function renderMembers(){const list=document.getElementById('memberList');list.innerHTML=members.map(m=>`<button class="member ${selectedId===m.id?'selected':''}" onclick="focusMember(${m.id})" aria-label="Ir até a localização de ${m.name}"><span class="member-avatar" style="background:${m.color}">${m.icon}</span><span class="member-body"><span class="member-name">${m.name}</span><span class="member-status">${m.status}</span><span class="member-time">◷ ${m.time}</span></span><span class="dot live" title="${m.status}"></span></button>`).join('');document.getElementById('memberCount').textContent=members.length;document.getElementById('mapCount').textContent=`${members.length} no mapa`}
-    function setSharing(value){sharing=value;localStorage.setItem('laco-html-state',JSON.stringify({sharing}));const sw=document.getElementById('sharingSwitch'),ps=document.getElementById('privacySwitch');[sw,ps].forEach(x=>{x.classList.toggle('on',sharing);x.setAttribute('aria-checked',String(sharing))});document.getElementById('sharingStatus').innerHTML=sharing?'● Compartilhamento ativo neste dispositivo':'○ Compartilhamento desativado';document.getElementById('privacyText').textContent=sharing?'Ativo — demonstração autorizada neste navegador':'Desativado';toast(sharing?'Consentimento ativado neste navegador.':'Compartilhamento revogado neste navegador.')}
-    async function search(query){if(!query)return;toast('Buscando destino…');try{const r=await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(query)}`,{headers:{'Accept-Language':'pt-BR'}});const data=await r.json();if(!data[0])throw new Error();const d={name:query,address:data[0].display_name,lat:Number(data[0].lat),lng:Number(data[0].lon)};map.setView([d.lat,d.lng],15);showDestination(d)}catch(e){toast('Não encontramos esse destino. Tente outro endereço ou categoria.')}}
-    document.getElementById('searchForm').addEventListener('submit',e=>{e.preventDefault();search(document.getElementById('searchInput').value.trim())});document.querySelectorAll('[data-search]').forEach(b=>b.addEventListener('click',()=>{document.getElementById('searchInput').value=b.dataset.search;search(b.dataset.search)}));document.getElementById('sharingSwitch').addEventListener('click',()=>setSharing(!sharing));document.getElementById('privacySwitch').addEventListener('click',()=>setSharing(!sharing));document.getElementById('menuBtn').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));document.getElementById('inviteBtn').addEventListener('click',()=>{const code=Math.random().toString(36).slice(2,10).toUpperCase();document.getElementById('inviteResult').textContent=`Código de demonstração: ${code}`;toast('Convite de demonstração criado.')});document.querySelectorAll('[data-view]').forEach(btn=>btn.addEventListener('click',()=>{const view=btn.dataset.view;document.querySelectorAll('[id^="view-"]').forEach(x=>x.classList.add('hidden'));document.getElementById('view-'+view).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.view===view));document.getElementById('sidebar').classList.remove('open');if(view==='mapa')setTimeout(()=>map.invalidateSize(),100)}));
-    renderMembers();setSharing(sharing);window.clearDestination=clearDestination;window.openNavigation=openNavigation;window.drawRoute=drawRoute;window.focusMember=focusMember;
-  </script>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getDatabase, ref, set, onValue, update, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+  const FIXED_CODE="OUXE2026";
+  const defaultCenter=[-12.2664,-38.9663];
+  const map=L.map('map',{zoomControl:true}).setView(defaultCenter,13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
+  setTimeout(()=>map.invalidateSize(),400);
+
+  const colors=['#2d6a4f','#356ae6','#a94848','#be6733','#7c3aed','#059669'];
+  let members={}, selectedId=null, destinationMarker=null, routeLine=null, destination=null, watchId=null, myLocation=null;
+  let db=null, familyCode=localStorage.getItem('laco-family-code')||FIXED_CODE;
+  let myMemberId=localStorage.getItem('laco-my-id')||'user_'+Math.random().toString(36).slice(2,7);
+  localStorage.setItem('laco-my-id', myMemberId);
+  localStorage.setItem('laco-family-code', familyCode);
+  document.getElementById('myId').textContent='ID: '+myMemberId;
+  document.getElementById('familyCode').value=familyCode;
+  document.getElementById('myName').value=localStorage.getItem('laco-my-name')||'';
+  const memberMarkers=new Map();
+  const toast=(t)=>{const el=document.getElementById('toast');el.textContent=t;el.classList.remove('hidden');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>el.classList.add('hidden'),3500)};
+
+  function initFirebase(){
+    const raw=localStorage.getItem('laco-firebase-config');
+    if(!raw){document.getElementById('connStatus').textContent='🟡 Modo local (sem Firebase)'; return null}
+    try{
+      const cfg=JSON.parse(raw);
+      const app=initializeApp(cfg);
+      db=getDatabase(app);
+      document.getElementById('connStatus').textContent='🟢 Firebase OUXE2026 ao vivo';
+      document.getElementById('firebaseStatus').textContent='Conectado!';
+      return db;
+    }catch(e){document.getElementById('connStatus').textContent='🔴 Erro Firebase'; return null}
+  }
+  db=initFirebase();
+
+  const makeIcon=(m)=>L.divIcon({className:'',html:`<div class="member-marker" style="background:${m.color}">${m.name.charAt(0).toUpperCase()}</div>`,iconSize:[44,44],iconAnchor:[22,22]});
+  const buildLink=(code)=>`${location.origin}${location.pathname}?familia=${code}`;
+  const updatePreview=()=>{
+    const link=buildLink(familyCode);
+    document.getElementById('inviteLinkPreview').textContent=link;
+    document.getElementById('fullLinkDisplay').textContent=link;
+  };
+
+  function render(){
+    const arr=Object.values(members);
+    document.getElementById('memberCount').textContent=arr.length;
+    document.getElementById('mapCount').textContent=arr.length+' ao vivo';
+    document.getElementById('onlineCount').textContent=arr.filter(m=>Date.now()-m.updatedAt<90000).length+' online';
+    const list=document.getElementById('memberList');
+    if(arr.length===0){list.innerHTML=`<div class="empty">📍 Nenhum membro real ainda.<br>Digite seu nome e clique em "+ Entrar no mapa".<br><br>Envie o link <strong>?familia=${familyCode}</strong> para a família.</div>`}
+    else{
+      list.innerHTML=arr.sort((a,b)=>b.updatedAt-a.updatedAt).map(m=>{
+        const ago=Math.round((Date.now()-m.updatedAt)/1000);
+        const t=ago<60?`agora • ${ago}s`:`${Math.floor(ago/60)}min atrás`;
+        const isMe=m.id===myMemberId;
+        return `<button class="member ${selectedId===m.id?'selected':''}" onclick="window.focusMember('${m.id}')"><div class="member-avatar" style="background:${m.color}">${m.name.charAt(0).toUpperCase()}</div><div class="member-body"><div class="member-name">${m.name} ${isMe?'(você)':''} <span style="font-size:9px;background:#dcfce7;color:#166534;padding:2px 6px;border-radius:99px">REAL</span></div><div class="member-time">◷ ${t} • ${m.lat.toFixed(4)}, ${m.lng.toFixed(4)}</div></div><span class="delete-btn" onclick="window.deleteMember('${m.id}', event)">✕</span></button>`
+      }).join('');
+    }
+    arr.forEach(m=>{
+      let mk=memberMarkers.get(m.id);
+      if(!mk){mk=L.marker([m.lat,m.lng],{icon:makeIcon(m)}).addTo(map); mk.on('click',()=>window.focusMember(m.id)); memberMarkers.set(m.id,mk)}
+      else mk.setLatLng([m.lat,m.lng]);
+    });
+    for(const [id,mk] of memberMarkers){ if(!members[id]){map.removeLayer(mk); memberMarkers.delete(id)} }
+  }
+
+  window.focusMember=(id)=>{
+    const m=members[id]; if(!m) return; selectedId=id; render();
+    map.setView([m.lat,m.lng],17,{animate:true});
+    const el=document.getElementById('destination');
+    el.innerHTML=`<div style="display:flex;justify-content:space-between"><div><strong>${m.name}</strong><div style="font-size:12px;color:#666">${m.lat.toFixed(5)}, ${m.lng.toFixed(5)}<br>${new Date(m.updatedAt).toLocaleTimeString()}</div></div><button class="outline" onclick="window.clearDest()">×</button></div><div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="primary" onclick="window.drawRoute()">Rota</button><button class="outline" onclick="window.openNav()">Navegar</button></div>`;
+    el.classList.remove('hidden');
+    if(destinationMarker) map.removeLayer(destinationMarker);
+    destinationMarker=L.marker([m.lat,m.lng]).addTo(map);
+    destination={lat:m.lat,lng:m.lng};
+  };
+  window.clearDest=()=>{document.getElementById('destination').classList.add('hidden'); if(destinationMarker)map.removeLayer(destinationMarker); if(routeLine)map.removeLayer(routeLine)};
+  window.openNav=()=>{if(!destination)return; window.open(`https://www.google.com/maps/dir/?api=1&destination=${destination.lat},${destination.lng}`,'_blank')};
+  window.drawRoute=()=>{if(!destination)return; const start=myLocation?[myLocation.lat,myLocation.lng]:defaultCenter; if(routeLine)map.removeLayer(routeLine); routeLine=L.polyline([start,[destination.lat,destination.lng]],{color:'#174b3a',weight:5,dashArray:'10 8'}).addTo(map); map.fitBounds(routeLine.getBounds(),{padding:[50,50]})};
+  window.deleteMember=async(id,e)=>{if(e)e.stopPropagation(); if(!confirm('Remover?'))return; if(db&&familyCode){await remove(ref(db, `families/${familyCode}/members/${id}`))} else {delete members[id]; localStorage.setItem('laco-local-'+familyCode, JSON.stringify(members)); render()}};
+
+  function joinFamily(code){
+    familyCode=code.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,12)||FIXED_CODE;
+    localStorage.setItem('laco-family-code', familyCode);
+    document.getElementById('familyCode').value=familyCode;
+    updatePreview();
+    if(db){
+      const familyRef=ref(db, `families/${familyCode}/members`);
+      onValue(familyRef, snap=>{members=snap.val()||{}; render();});
+      document.getElementById('connStatus').textContent='🟢 Ao vivo '+familyCode;
+      toast(`Conectado em ${familyCode}`);
+      startWatch();
+    }else{
+      members=JSON.parse(localStorage.getItem('laco-local-'+familyCode)||'{}');
+      render();
+      toast(`Modo local ${familyCode}. Configure Firebase para celular`);
+    }
+  }
+
+  function addMeReal(name){
+    const n=name.trim(); if(!n){toast('Digite nome'); return}
+    if(!familyCode){toast('Código vazio'); return}
+    if(!navigator.geolocation){toast('GPS não suportado'); return}
+    toast('📡 Pegando GPS real...');
+    navigator.geolocation.getCurrentPosition(pos=>{
+      const data={id:myMemberId, name:n, color:colors[Math.floor(Math.random()*colors.length)], lat:pos.coords.latitude, lng:pos.coords.longitude, accuracy:pos.coords.accuracy, updatedAt:Date.now(), isReal:true};
+      if(db){
+        set(ref(db, `families/${familyCode}/members/${myMemberId}`), data);
+        onDisconnect(ref(db, `families/${familyCode}/members/${myMemberId}`)).remove();
+      }else{
+        members[myMemberId]=data;
+        localStorage.setItem('laco-local-'+familyCode, JSON.stringify(members));
+        render();
+      }
+      localStorage.setItem('laco-my-name', n);
+      map.setView([data.lat,data.lng],16);
+      toast(`${n} entrou! Todos te veem`);
+      startWatch();
+      document.getElementById('inviteModal').classList.add('hidden');
+    }, err=>toast('Erro GPS: '+err.message), {enableHighAccuracy:true, timeout:12000});
+  }
+
+  function startWatch(){
+    if(!navigator.geolocation||!familyCode||!myMemberId) return;
+    if(watchId) navigator.geolocation.clearWatch(watchId);
+    watchId=navigator.geolocation.watchPosition(pos=>{
+      myLocation={lat:pos.coords.latitude, lng:pos.coords.longitude};
+      document.getElementById('myLoc').textContent=`Você: ${myLocation.lat.toFixed(5)}, ${myLocation.lng.toFixed(5)} • ${Math.round(pos.coords.accuracy)}m`;
+      if(db && members[myMemberId]){update(ref(db, `families/${familyCode}/members/${myMemberId}`), {lat:myLocation.lat,lng:myLocation.lng,accuracy:pos.coords.accuracy,updatedAt:Date.now()})}
+    }, null, {enableHighAccuracy:true, maximumAge:2000, timeout:20000});
+  }
+
+  // eventos
+  document.getElementById('familyCode').addEventListener('change', e=>joinFamily(e.target.value));
+  document.getElementById('joinBtn')?.addEventListener('click', ()=>joinFamily(document.getElementById('familyCode').value));
+  document.getElementById('addMeBtn').addEventListener('click', ()=>addMeReal(document.getElementById('myName').value));
+  document.getElementById('myName').addEventListener('keydown', e=>{if(e.key==='Enter') addMeReal(e.target.value)});
+  document.getElementById('copyLinkBtn').addEventListener('click', ()=>{const l=document.getElementById('inviteLinkPreview').textContent; navigator.clipboard.writeText(l); toast('Link OUXE2026 copiado!')});
+  document.getElementById('shareWhatsBtn').addEventListener('click', ()=>{const l=document.getElementById('inviteLinkPreview').textContent; window.open(`https://wa.me/?text=${encodeURIComponent('Entra na família OUXE2026 no mapa ao vivo: '+l)}`,'_blank')});
+  document.getElementById('copyFullLinkBtn').addEventListener('click', ()=>{const l=document.getElementById('fullLinkDisplay').textContent; navigator.clipboard.writeText(l); toast('Copiado!')});
+  document.getElementById('generateNewBtn').addEventListener('click', ()=>{const c='OUXE'+Math.floor(Math.random()*9000+1000); joinFamily(c); document.getElementById('fullLinkDisplay').textContent=buildLink(c)});
+  document.getElementById('sharingSwitch').addEventListener('click', e=>{const on=e.target.classList.toggle('on'); if(on){startWatch(); toast('GPS ao vivo ligado')} else {if(watchId)navigator.geolocation.clearWatch(watchId)}});
+  document.getElementById('locateBtn').addEventListener('click', ()=>{if(myLocation) map.setView([myLocation.lat,myLocation.lng],17); else toast('Sem GPS ainda')});
+  document.getElementById('searchForm').addEventListener('submit', async e=>{e.preventDefault(); const q=document.getElementById('searchInput').value.trim(); if(!q)return; try{const r=await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(q)}`); const d=await r.json(); if(!d[0])throw 0; map.setView([Number(d[0].lat),Number(d[0].lon)],15);}catch{toast('Não encontrado')}});
+  document.getElementById('saveFirebaseBtn').addEventListener('click', ()=>{const raw=document.getElementById('firebaseConfigInput').value.trim(); try{JSON.parse(raw); localStorage.setItem('laco-firebase-config', raw); toast('Salvo! Recarregando...'); setTimeout(()=>location.reload(),700)}catch{toast('JSON inválido')}});
+  document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{const v=b.dataset.view; document.querySelectorAll('[id^="view-"]').forEach(x=>x.classList.add('hidden')); document.getElementById('view-'+v).classList.remove('hidden'); document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.view===v)); document.getElementById('sidebar').classList.remove('open'); if(v==='mapa') setTimeout(()=>map.invalidateSize(),200)}));
+  document.getElementById('menuBtn').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
+
+  // convite automático
+  function checkInvite(){
+    const params=new URLSearchParams(location.search);
+    const code=params.get('familia')||params.get('family')||params.get('codigo');
+    if(code){
+      const clean=code.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,12);
+      joinFamily(clean);
+      document.getElementById('inviteModalCode').textContent=clean;
+      document.getElementById('inviteModal').classList.remove('hidden');
+      const saved=localStorage.getItem('laco-my-name'); if(saved) document.getElementById('inviteName').value=saved;
+    }else{
+      joinFamily(familyCode);
+    }
+    updatePreview();
+  }
+  document.getElementById('inviteJoinBtn').addEventListener('click', ()=>{const n=document.getElementById('inviteName').value.trim(); if(!n){toast('Digite nome'); return} document.getElementById('myName').value=n; addMeReal(n)});
+  document.getElementById('inviteCloseBtn').addEventListener('click', ()=>document.getElementById('inviteModal').classList.add('hidden'));
+  document.getElementById('inviteName').addEventListener('keydown', e=>{if(e.key==='Enter') document.getElementById('inviteJoinBtn').click()});
+
+  checkInvite();
+  setTimeout(()=>map.invalidateSize(),600);
+</script>
 </body>
 </html>
