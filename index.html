@@ -2,48 +2,59 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a1a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Laço Família OUXE2026 - Mapa Tempo Real</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#fff;overflow:hidden;height:100vh;width:100vw}
-#map{width:100%;height:100vh;z-index:1}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{overscroll-behavior:none}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#fff;overflow:hidden;height:100vh;height:100dvh;width:100vw}
+#map{width:100%;height:100vh;height:100dvh;z-index:1}
 
-.header{position:fixed;top:0;left:0;right:0;z-index:1000;background:linear-gradient(135deg,#1a1a2e,#16213e);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 20px rgba(0,0,0,.5);border-bottom:1px solid #0f3460}
+.header{position:fixed;top:0;left:0;right:0;z-index:1000;background:linear-gradient(135deg,#1a1a2e,#16213e);padding:calc(8px + env(safe-area-inset-top)) 12px 8px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 20px rgba(0,0,0,.5);border-bottom:1px solid #0f3460}
 .header h1{font-size:14px;color:#e94560;display:flex;align-items:center;gap:6px}
 .header h1 span{color:#00d2ff;font-size:11px}
 .header-btns{display:flex;gap:6px}
-.header-btns button{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:5px 10px;border-radius:20px;font-size:11px;cursor:pointer;transition:.3s}
+.header-btns button{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:6px 12px;border-radius:20px;font-size:12px;cursor:pointer;transition:.3s;min-height:32px}
 .header-btns button:hover{background:rgba(233,69,96,.3);border-color:#e94560}
+.header-btns button:active{transform:scale(.95)}
 
-.status-bar{position:fixed;top:52px;left:0;right:0;z-index:999;background:rgba(10,10,26,.9);padding:6px 12px;display:flex;align-items:center;justify-content:space-between;font-size:11px;border-bottom:1px solid rgba(255,255,255,.1)}
+.status-bar{position:fixed;top:calc(52px + env(safe-area-inset-top));left:0;right:0;z-index:999;background:rgba(10,10,26,.9);padding:6px 12px;display:flex;align-items:center;justify-content:space-between;font-size:11px;border-bottom:1px solid rgba(255,255,255,.1);flex-wrap:wrap;gap:4px}
 .status-bar .code{color:#00d2ff;font-weight:700}
 .status-bar .online{color:#4caf50}
+.status-bar .syncing{color:#ff9800}
+.status-bar .sync-error{color:#e94560}
 
-.bottom-panel{position:fixed;bottom:0;left:0;right:0;z-index:1000;background:linear-gradient(180deg,rgba(10,10,26,.95),rgba(10,10,26,1));border-top:1px solid #0f3460;padding:10px 12px;max-height:40vh;overflow-y:auto}
-.bottom-panel h3{font-size:13px;color:#e94560;margin-bottom:8px}
+.bottom-panel{position:fixed;bottom:0;left:0;right:0;z-index:1000;background:linear-gradient(180deg,rgba(10,10,26,.95),rgba(10,10,26,1));border-top:1px solid #0f3460;padding:10px 12px calc(10px + env(safe-area-inset-bottom));max-height:40vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.bottom-panel h3{font-size:13px;color:#e94560;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
 .member-list{display:flex;flex-direction:column;gap:6px}
 .member-item{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.1)}
-.member-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.member-item.offline{opacity:.55}
+.member-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;background:#666}
 .member-dot.online{background:#4caf50;box-shadow:0 0 8px #4caf50}
 .member-dot.me{background:#00d2ff;box-shadow:0 0 8px #00d2ff}
-.member-name{font-size:12px;flex:1}
-.member-dist{font-size:10px;color:#888}
+.member-name{font-size:12px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.member-sub{font-size:10px;color:#888;text-align:right;flex-shrink:0}
 
 .modal-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.active{display:flex}
 .modal{background:#1a1a2e;border:1px solid #0f3460;border-radius:16px;padding:24px;width:100%;max-width:420px;max-height:85vh;overflow-y:auto;position:relative}
 .modal h2{color:#e94560;font-size:18px;margin-bottom:16px;text-align:center}
 .modal p{font-size:13px;color:#aaa;margin-bottom:12px;line-height:1.5}
-.modal input{width:100%;padding:10px 14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;font-size:14px;margin-bottom:12px;outline:none}
+.modal input{width:100%;padding:12px 14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;font-size:16px;margin-bottom:12px;outline:none}
 .modal input:focus{border-color:#00d2ff}
-.modal-btn{width:100%;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px;transition:.3s}
+.modal-btn{width:100%;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px;transition:.3s;min-height:44px}
 .modal-btn.primary{background:linear-gradient(135deg,#e94560,#c23152);color:#fff}
 .modal-btn.success{background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff}
+.modal-btn.secondary{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff}
 .modal-btn:hover{opacity:.85}
-.modal .close-btn{position:absolute;top:12px;right:16px;background:none;border:none;color:#fff;font-size:22px;cursor:pointer}
+.modal-btn:active{transform:scale(.98)}
+.modal .close-btn{position:absolute;top:12px;right:16px;background:none;border:none;color:#fff;font-size:26px;cursor:pointer;line-height:1;padding:6px;min-width:36px;min-height:36px}
 .invite-link-box{background:rgba(0,210,255,.08);border:1px solid rgba(0,210,255,.3);border-radius:10px;padding:10px;margin:10px 0;word-break:break-all;font-size:12px;color:#00d2ff}
 
 .invite-popup{position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;padding:20px}
@@ -51,17 +62,19 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#fff;o
 .invite-popup .modal{text-align:center;border-color:#e94560}
 .invite-popup .emoji{font-size:48px;margin-bottom:12px}
 
-.gps-btn{position:fixed;bottom:180px;right:16px;z-index:1001;width:44px;height:44px;border-radius:50%;background:#1a1a2e;border:2px solid #00d2ff;color:#00d2ff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.5)}
+.gps-btn{position:fixed;bottom:calc(180px + env(safe-area-inset-bottom));right:16px;z-index:1001;width:48px;height:48px;border-radius:50%;background:#1a1a2e;border:2px solid #00d2ff;color:#00d2ff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.5)}
 .gps-btn:hover{background:#00d2ff;color:#fff}
+.gps-btn:active{transform:scale(.92)}
 
-.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:5000;background:#4caf50;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;opacity:0;transition:.3s;pointer-events:none}
+.toast{position:fixed;top:calc(70px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:5000;background:#4caf50;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;opacity:0;transition:.3s;pointer-events:none;max-width:90vw;text-align:center}
 .toast.show{opacity:1}
 .toast.error{background:#e94560}
 
 .leaflet-popup-content-wrapper{background:#1a1a2e;color:#fff;border:1px solid #0f3460;border-radius:10px}
 .leaflet-popup-tip{background:#1a1a2e}
 .leaflet-popup-content{font-size:13px;margin:8px 12px}
-.custom-marker{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.4);font-size:16px;font-weight:700;color:#fff}
+.custom-marker{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.4);font-size:16px;font-weight:700;color:#fff;transition:opacity .3s}
+.custom-marker.offline-marker{opacity:.45;filter:grayscale(60%)}
 .pulse-ring{position:absolute;width:50px;height:50px;border-radius:50%;border:2px solid;animation:pulse 2s infinite;opacity:0}
 @keyframes pulse{0%{transform:scale(.5);opacity:.8}100%{transform:scale(1.5);opacity:0}}
 </style>
@@ -78,7 +91,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#fff;o
 
 <div class="status-bar">
   <span>Código: <span class="code">OUXE2026</span></span>
-  <span class="online">🟢 Tempo Real</span>
+  <span id="syncStatus" class="online">🟢 Tempo Real</span>
   <span><span id="onlineCount">0</span> online</span>
 </div>
 
@@ -87,7 +100,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#fff;o
 <button class="gps-btn" onclick="centerOnMe()" title="Centralizar em mim">◎</button>
 
 <div class="bottom-panel">
-  <h3>👨‍👩‍👧‍👦 Membros da Família</h3>
+  <h3>
+    <span>👨‍👩‍👧‍👦 Membros da Família</span>
+  </h3>
   <div class="member-list" id="memberList">
     <div style="color:#666;font-size:12px;text-align:center;padding:10px">Conectando...</div>
   </div>
@@ -130,8 +145,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#fff;o
 
 <script>
 const FAMILY_CODE = 'OUXE2026';
+// ATENÇÃO: substitua pelo SEU Pantry ID, gerado gratuitamente em https://getpantry.cloud
+// (crie uma conta lá, copie o "Pantry ID" e cole abaixo — o valor de exemplo abaixo pode não funcionar)
 const PANTRY_ID = 'a8f3e2b1-9c4d-4e5f-a6b7-c8d9e0f1a2b3';
 const API_URL = `https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}`;
+const BASKET_NAME = `familia_${FAMILY_CODE}`;
+
+const OFFLINE_AFTER_MS = 5 * 60 * 1000;   // 5 min sem atualizar = offline
+const SYNC_INTERVAL_MS = 3000;             // frequência de sincronização
 
 let map, myMarker, myLatLng;
 let myMemberId = null;
@@ -140,12 +161,21 @@ let members = {};
 let markers = {};
 let watchId = null;
 let syncInterval = null;
+let consecutiveSyncErrors = 0;
+let lastErrorToastAt = 0;
 
 const COLORS = ['#e94560','#00d2ff','#4caf50','#ff9800','#9c27b0','#ffeb3b','#00bcd4','#ff5722','#8bc34a','#e91e63'];
 function getColor(id) {
   let hash = 0;
   for (let i = 0; i < id.length; i++) hash = id.charCodeAt(i) + ((hash << 5) - hash);
   return COLORS[Math.abs(hash) % COLORS.length];
+}
+
+// Evita XSS: qualquer texto vindo de outros membros (nome) passa por aqui antes de ir para innerHTML
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = String(str == null ? '' : str);
+  return div.innerHTML;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -170,7 +200,30 @@ function generateInviteLink() {
 
 function copyInviteLink() {
   const url = document.getElementById('inviteLink').textContent;
-  navigator.clipboard.writeText(url).then(() => showToast('Link copiado! ✅'));
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(url)
+      .then(() => showToast('Link copiado! ✅'))
+      .catch(() => fallbackCopy(url));
+  } else {
+    fallbackCopy(url);
+  }
+}
+
+function fallbackCopy(text) {
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('Link copiado! ✅');
+  } catch (e) {
+    showToast('Não foi possível copiar. Selecione o link manualmente.', true);
+  }
 }
 
 function shareWhatsApp() {
@@ -193,7 +246,7 @@ function checkInvitePopup() {
 function acceptInvite() {
   const name = document.getElementById('inviteNameInput').value.trim();
   if (!name) { showToast('Digite seu nome!', true); return; }
-  myName = name;
+  myName = name.slice(0, 30);
   localStorage.setItem('ouxe_name', myName);
   document.getElementById('invitePopup').classList.remove('active');
   startApp();
@@ -202,7 +255,7 @@ function acceptInvite() {
 function askName() {
   const name = prompt('Digite seu nome para entrar no mapa da família:');
   if (name && name.trim()) {
-    myName = name.trim();
+    myName = name.trim().slice(0, 30);
     localStorage.setItem('ouxe_name', myName);
     startApp();
   }
@@ -213,6 +266,9 @@ function startApp() {
   if (!myMemberId) {
     myMemberId = 'member_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
     localStorage.setItem('ouxe_memberId', myMemberId);
+  }
+  if (!window.isSecureContext) {
+    showToast('Este site precisa de HTTPS (ou localhost) para o GPS funcionar', true);
   }
   startGPS();
   startSync();
@@ -232,10 +288,13 @@ function startGPS() {
       } else {
         myMarker.setLatLng(myLatLng);
       }
+      updateMemberList();
     },
     (err) => {
       console.error('GPS Error:', err);
       if (err.code === 1) showToast('Permita o GPS para funcionar!', true);
+      else if (err.code === 2) showToast('Não foi possível obter sua localização', true);
+      else if (err.code === 3) showToast('Tempo esgotado ao buscar GPS. Tentando de novo...', true);
     },
     { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
   );
@@ -249,18 +308,20 @@ function centerOnMe() {
   }
 }
 
-function createMarker(lat, lng, name, color, isMe) {
+function createMarker(lat, lng, name, color, isMe, offline) {
+  const safeName = escapeHtml(name || '?');
+  const initial = escapeHtml((name || '?').charAt(0).toUpperCase());
   const icon = L.divIcon({
     className: '',
     html: `<div style="position:relative;display:flex;align-items:center;justify-content:center">
-      <div class="custom-marker" style="background:${color}">${name.charAt(0).toUpperCase()}</div>
+      <div class="custom-marker${offline ? ' offline-marker' : ''}" style="background:${color}">${initial}</div>
       ${isMe ? `<div class="pulse-ring" style="border-color:${color}"></div>` : ''}
     </div>`,
     iconSize: [36, 36],
     iconAnchor: [18, 18]
   });
   const marker = L.marker([lat, lng], { icon }).addTo(map);
-  marker.bindPopup(`<strong>${isMe ? '📍 ' : ''}${name}</strong><br><small>${isMe ? 'Você' : 'Família'}</small>`);
+  marker.bindPopup(`<strong>${isMe ? '📍 ' : ''}${safeName}</strong><br><small>${isMe ? 'Você' : (offline ? '🔴 Offline' : '🟢 Online')}</small>`);
   return marker;
 }
 
@@ -268,74 +329,126 @@ function startSync() {
   syncInterval = setInterval(() => {
     if (myLatLng) updateMyPosition();
     fetchAllMembers();
-  }, 3000);
-  
+  }, SYNC_INTERVAL_MS);
+
   if (myLatLng) updateMyPosition();
   fetchAllMembers();
 }
 
+// Grava (faz merge) só a MINHA posição no basket compartilhado, sem apagar a dos outros membros.
+// Usa PUT, que no Pantry Cloud atualiza/mescla chaves no JSON existente (POST substituiria o basket inteiro).
 async function updateMyPosition() {
-  if (!myLatLng) return;
-  
+  if (!myLatLng || !myMemberId) return;
+
   const myData = {
     nome: myName,
     lat: myLatLng.lat,
     lng: myLatLng.lng,
     timestamp: Date.now()
   };
-  
+
   try {
-    await fetch(`${API_URL}/blob/familia_${FAMILY_CODE}_${myMemberId}`, {
-      method: 'POST',
+    const res = await fetch(`${API_URL}/basket/${BASKET_NAME}`, {
+      method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(myData)
+      body: JSON.stringify({ [myMemberId]: myData })
     });
+    if (!res.ok) {
+      if (res.status === 400) {
+        // Basket ainda não existe: cria com a minha posição já dentro (Pantry não aceita basket vazio)
+        await fetch(`${API_URL}/basket/${BASKET_NAME}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ [myMemberId]: myData })
+        });
+      } else {
+        throw new Error('HTTP ' + res.status);
+      }
+    }
+    onSyncSuccess();
   } catch (e) {
     console.error('Erro ao enviar posição:', e);
+    onSyncError();
   }
 }
 
 async function fetchAllMembers() {
   try {
-    const response = await fetch(`${API_URL}/basket/familia_${FAMILY_CODE}`);
+    const response = await fetch(`${API_URL}/basket/${BASKET_NAME}`);
     if (!response.ok) {
-      await fetch(`${API_URL}/basket/familia_${FAMILY_CODE}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({})
-      });
+      if (response.status === 400) {
+        // Basket ainda não existe. Só cria se eu já tiver minha própria posição para não criar um basket vazio.
+        if (myLatLng && myMemberId) {
+          await updateMyPosition();
+        }
+      } else {
+        throw new Error('HTTP ' + response.status);
+      }
+      onSyncError(true);
       return;
     }
-    
+
     const data = await response.json();
     members = data || {};
     updateAllMarkers();
     updateMemberList();
+    onSyncSuccess();
   } catch (e) {
     console.error('Erro ao buscar membros:', e);
+    onSyncError();
+  }
+}
+
+function onSyncSuccess() {
+  consecutiveSyncErrors = 0;
+  const el = document.getElementById('syncStatus');
+  el.textContent = '🟢 Tempo Real';
+  el.className = 'online';
+}
+
+function onSyncError(quiet) {
+  consecutiveSyncErrors++;
+  const el = document.getElementById('syncStatus');
+  if (consecutiveSyncErrors >= 3) {
+    el.textContent = '🔴 Sem conexão';
+    el.className = 'sync-error';
+    const now = Date.now();
+    if (!quiet && now - lastErrorToastAt > 15000) {
+      lastErrorToastAt = now;
+      showToast('Falha ao sincronizar. Verifique sua internet ou o Pantry ID configurado.', true);
+    }
+  } else {
+    el.textContent = '🟡 Sincronizando...';
+    el.className = 'syncing';
   }
 }
 
 function updateAllMarkers() {
   const now = Date.now();
-  
+
   Object.keys(members).forEach(id => {
     if (id === myMemberId) return;
-    
+
     const m = members[id];
-    if (!m.lat || !m.lng) return;
-    
-    const isOnline = m.timestamp && (now - m.timestamp < 300000);
+    if (!m || typeof m.lat !== 'number' || typeof m.lng !== 'number') return;
+
+    const isOnline = !!(m.timestamp && (now - m.timestamp < OFFLINE_AFTER_MS));
     const color = getColor(id);
-    
+    const safeName = escapeHtml(m.nome || 'Sem nome');
+
     if (markers[id]) {
       markers[id].setLatLng([m.lat, m.lng]);
-      markers[id].setPopupContent(`<strong>${m.nome}</strong><br><small>${isOnline ? '🟢 Online' : '🔴 Offline'}</small>`);
+      markers[id].setPopupContent(`<strong>${safeName}</strong><br><small>${isOnline ? '🟢 Online' : '🔴 Offline'}</small>`);
+      const el = markers[id].getElement();
+      if (el) {
+        const dot = el.querySelector('.custom-marker');
+        if (dot) dot.classList.toggle('offline-marker', !isOnline);
+      }
     } else {
-      markers[id] = createMarker(m.lat, m.lng, m.nome, color, false);
+      markers[id] = createMarker(m.lat, m.lng, m.nome, color, false, !isOnline);
     }
   });
-  
+
   Object.keys(markers).forEach(id => {
     if (!members[id]) {
       map.removeLayer(markers[id]);
@@ -344,39 +457,55 @@ function updateAllMarkers() {
   });
 }
 
+function formatLastSeen(timestamp, now) {
+  if (!timestamp) return 'nunca visto';
+  const diffMs = now - timestamp;
+  if (diffMs < 60000) return 'agora';
+  const min = Math.round(diffMs / 60000);
+  if (min < 60) return `há ${min} min`;
+  const h = Math.round(min / 60);
+  if (h < 24) return `há ${h}h`;
+  return `há ${Math.round(h / 24)}d`;
+}
+
 function updateMemberList() {
   const list = document.getElementById('memberList');
   const now = Date.now();
   let onlineCount = 0;
-  let html = '';
-  
-  const meOnline = myLatLng ? true : false;
+
+  const meOnline = !!myLatLng;
   if (meOnline) onlineCount++;
-  html += `<div class="member-item">
+
+  const others = Object.keys(members)
+    .filter(id => id !== myMemberId)
+    .map(id => {
+      const m = members[id] || {};
+      const isOnline = !!(m.timestamp && (now - m.timestamp < OFFLINE_AFTER_MS));
+      let dist = '';
+      if (myLatLng && typeof m.lat === 'number' && typeof m.lng === 'number') {
+        const d = myLatLng.distanceTo(L.latLng(m.lat, m.lng));
+        dist = d < 1000 ? `${Math.round(d)}m` : `${(d / 1000).toFixed(1)}km`;
+      }
+      return { id, m, isOnline, dist };
+    })
+    .sort((a, b) => (b.isOnline - a.isOnline)); // online primeiro
+
+  let html = `<div class="member-item">
     <div class="member-dot me"></div>
-    <div class="member-name"><strong>${myName || 'Eu'}</strong> (você)</div>
-    <div class="member-dist">${meOnline ? '🟢' : '🔴'}</div>
+    <div class="member-name">${escapeHtml(myName || 'Eu')} (você)</div>
+    <div class="member-sub">${meOnline ? '🟢 online' : 'aguardando GPS'}</div>
   </div>`;
-  
-  Object.keys(members).forEach(id => {
-    if (id === myMemberId) return;
-    const m = members[id];
-    const isOnline = m.timestamp && (now - m.timestamp < 300000);
+
+  others.forEach(({ id, m, isOnline, dist }) => {
     if (isOnline) onlineCount++;
-    
-    let dist = '';
-    if (myLatLng && m.lat && m.lng) {
-      const d = myLatLng.distanceTo(L.latLng(m.lat, m.lng));
-      dist = d < 1000 ? `${Math.round(d)}m` : `${(d/1000).toFixed(1)}km`;
-    }
-    
-    html += `<div class="member-item">
-      <div class="member-dot ${isOnline ? 'online' : 'offline'}"></div>
-      <div class="member-name">${m.nome || 'Sem nome'}</div>
-      <div class="member-dist">${dist}</div>
+    const sub = isOnline ? dist : formatLastSeen(m.timestamp, now);
+    html += `<div class="member-item ${isOnline ? '' : 'offline'}">
+      <div class="member-dot ${isOnline ? 'online' : ''}"></div>
+      <div class="member-name">${escapeHtml(m.nome || 'Sem nome')}</div>
+      <div class="member-sub">${escapeHtml(sub)}</div>
     </div>`;
   });
-  
+
   list.innerHTML = html;
   document.getElementById('onlineCount').textContent = onlineCount;
 }
@@ -384,11 +513,13 @@ function updateMemberList() {
 function openModal(id) { document.getElementById(id).classList.add('active'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
+let toastTimer = null;
 function showToast(msg, isError) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'toast show' + (isError ? ' error' : '');
-  setTimeout(() => t.className = 'toast', 3000);
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = 'toast', 3000);
 }
 
 document.querySelectorAll('.modal-overlay').forEach(el => {
@@ -399,6 +530,7 @@ document.querySelectorAll('.modal-overlay').forEach(el => {
 
 window.addEventListener('beforeunload', () => {
   if (syncInterval) clearInterval(syncInterval);
+  if (watchId !== null && navigator.geolocation) navigator.geolocation.clearWatch(watchId);
 });
 </script>
 </body>
