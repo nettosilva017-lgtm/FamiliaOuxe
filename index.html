@@ -163,6 +163,8 @@ let watchId = null;
 let syncInterval = null;
 let consecutiveSyncErrors = 0;
 let lastErrorToastAt = 0;
+let coolDownUntil = 0; // enquanto now < coolDownUntil, não faz novas chamadas (usado após 429)
+let basketExists = false; // evita tentar recriar o basket toda hora
 
 const COLORS = ['#e94560','#00d2ff','#4caf50','#ff9800','#9c27b0','#ffeb3b','#00bcd4','#ff5722','#8bc34a','#e91e63'];
 function getColor(id) {
@@ -270,8 +272,33 @@ function startApp() {
   if (!window.isSecureContext) {
     showToast('Este site precisa de HTTPS (ou localhost) para o GPS funcionar', true);
   }
+  verifyPantryConfig();
   startGPS();
   startSync();
+}
+
+// Checa uma vez, logo no início, se o PANTRY_ID configurado é válido de verdade,
+// em vez de deixar o usuário esperar 3 ciclos de erro pra descobrir.
+async function verifyPantryConfig() {
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) {
+      showConfigBanner();
+    }
+  } catch (e) {
+    // erro de rede pontual não significa ID inválido; não mostra o banner por causa disso
+    console.warn('Não foi possível validar o Pantry ID agora:', e);
+  }
+}
+
+function showConfigBanner() {
+  if (document.getElementById('configBanner')) return;
+  const banner = document.createElement('div');
+  banner.id = 'configBanner';
+  banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:4000;background:#c23152;color:#fff;padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top));font-size:12px;text-align:center;line-height:1.5';
+  banner.innerHTML = '⚠️ O PANTRY_ID deste app parece inválido ou inexistente. Crie o seu em <strong>getpantry.cloud</strong> e substitua a linha PANTRY_ID no código. <button id="closeBanner" style="margin-left:8px;background:#fff;color:#c23152;border:none;border-radius:6px;padding:4px 10px;font-weight:700">Entendi</button>';
+  document.body.appendChild(banner);
+  document.getElementById('closeBanner').onclick = () => banner.remove();
 }
 
 function startGPS() {
@@ -327,12 +354,26 @@ function createMarker(lat, lng, name, color, isMe, offline) {
 
 function startSync() {
   syncInterval = setInterval(() => {
+    if (Date.now() < coolDownUntil) return; // em cooldown por causa de 429, não bate mais na API agora
     if (myLatLng) updateMyPosition();
     fetchAllMembers();
   }, SYNC_INTERVAL_MS);
 
   if (myLatLng) updateMyPosition();
   fetchAllMembers();
+}
+
+function handleRateLimit(res) {
+  if (res.status === 429) {
+    coolDownUntil = Date.now() + 30000; // pausa 30s antes de tentar de novo
+    const now = Date.now();
+    if (now - lastErrorToastAt > 15000) {
+      lastErrorToastAt = now;
+      showToast('Muitas requisições — pausando 30s antes de tentar de novo', true);
+    }
+    return true;
+  }
+  return false;
 }
 
 // Grava (faz merge) só a MINHA posição no basket compartilhado, sem apagar a dos outros membros.
@@ -353,17 +394,23 @@ async function updateMyPosition() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ [myMemberId]: myData })
     });
+    if (handleRateLimit(res)) return;
     if (!res.ok) {
-      if (res.status === 400) {
+      if (res.status === 400 && !basketExists) {
         // Basket ainda não existe: cria com a minha posição já dentro (Pantry não aceita basket vazio)
-        await fetch(`${API_URL}/basket/${BASKET_NAME}`, {
+        const createRes = await fetch(`${API_URL}/basket/${BASKET_NAME}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ [myMemberId]: myData })
         });
+        if (handleRateLimit(createRes)) return;
+        if (!createRes.ok) throw new Error('HTTP ' + createRes.status);
+        basketExists = true;
       } else {
         throw new Error('HTTP ' + res.status);
       }
+    } else {
+      basketExists = true;
     }
     onSyncSuccess();
   } catch (e) {
@@ -375,20 +422,19 @@ async function updateMyPosition() {
 async function fetchAllMembers() {
   try {
     const response = await fetch(`${API_URL}/basket/${BASKET_NAME}`);
+    if (handleRateLimit(response)) return;
     if (!response.ok) {
-      if (response.status === 400) {
-        // Basket ainda não existe. Só cria se eu já tiver minha própria posição para não criar um basket vazio.
-        if (myLatLng && myMemberId) {
-          await updateMyPosition();
-        }
-      } else {
+      if (response.status !== 400) {
         throw new Error('HTTP ' + response.status);
       }
+      // Basket ainda não existe — normal antes da primeira posição ser enviada.
+      // updateMyPosition (chamado no mesmo ciclo) já cuida de criá-lo; não repetimos a chamada aqui.
       onSyncError(true);
       return;
     }
 
     const data = await response.json();
+    basketExists = true;
     members = data || {};
     updateAllMarkers();
     updateMemberList();
