@@ -145,11 +145,21 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#fff;o
 
 <script>
 const FAMILY_CODE = 'OUXE2026';
-// ATENÇÃO: substitua pelo SEU Pantry ID, gerado gratuitamente em https://getpantry.cloud
-// (crie uma conta lá, copie o "Pantry ID" e cole abaixo — o valor de exemplo abaixo pode não funcionar)
-const PANTRY_ID = 'a8f3e2b1-9c4d-4e5f-a6b7-c8d9e0f1a2b3';
-const API_URL = `https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}`;
-const BASKET_NAME = `familia_${FAMILY_CODE}`;
+
+// ATENÇÃO: substitua pela URL do SEU Realtime Database do Firebase.
+// Como conseguir a sua (gratuito, com conta Google):
+// 1. Acesse https://console.firebase.google.com e entre com uma conta Google
+// 2. "Adicionar projeto" (ou "Criar um projeto") -> dê um nome qualquer -> pode desativar o Google Analytics -> Criar
+// 3. No menu lateral: Build/Compilação -> Realtime Database -> "Criar banco de dados"
+// 4. Escolha a localização (ex: us-central1) -> inicie em "modo de teste" (ou configure regras públicas, veja abaixo)
+// 5. Copie a URL que aparece no topo da tela do banco (algo como https://SEU-PROJETO-default-rtdb.firebaseio.com)
+//    e cole abaixo, substituindo o valor de exemplo.
+// 6. Na aba "Regras" do Realtime Database, use isto para permitir leitura/escrita sem login
+//    (ok para um app familiar simples; qualquer um com o link do Firebase poderia ler/escrever):
+//    { "rules": { ".read": true, ".write": true } }
+//    Sem isso, o modo de teste padrão do Firebase expira sozinho depois de 30 dias.
+const FIREBASE_DB_URL = 'https://SEU-PROJETO-default-rtdb.firebaseio.com';
+const FAMILY_PATH = `familias/${FAMILY_CODE}`; // onde os membros dessa família ficam salvos dentro do banco
 
 const OFFLINE_AFTER_MS = 5 * 60 * 1000;   // 5 min sem atualizar = offline
 const SYNC_INTERVAL_MS = 3000;             // frequência de sincronização
@@ -163,8 +173,7 @@ let watchId = null;
 let syncInterval = null;
 let consecutiveSyncErrors = 0;
 let lastErrorToastAt = 0;
-let coolDownUntil = 0; // enquanto now < coolDownUntil, não faz novas chamadas (usado após 429)
-let basketExists = false; // evita tentar recriar o basket toda hora
+let coolDownUntil = 0; // enquanto now < coolDownUntil, não faz novas chamadas (usado após erro repetido/limite)
 
 const COLORS = ['#e94560','#00d2ff','#4caf50','#ff9800','#9c27b0','#ffeb3b','#00bcd4','#ff5722','#8bc34a','#e91e63'];
 function getColor(id) {
@@ -272,31 +281,35 @@ function startApp() {
   if (!window.isSecureContext) {
     showToast('Este site precisa de HTTPS (ou localhost) para o GPS funcionar', true);
   }
-  verifyPantryConfig();
+  verifyFirebaseConfig();
   startGPS();
   startSync();
 }
 
-// Checa uma vez, logo no início, se o PANTRY_ID configurado é válido de verdade,
-// em vez de deixar o usuário esperar 3 ciclos de erro pra descobrir.
-async function verifyPantryConfig() {
+// Checa uma vez, logo no início, se a URL do Firebase configurada é válida de verdade,
+// em vez de deixar o usuário esperar vários ciclos de erro pra descobrir.
+async function verifyFirebaseConfig() {
+  if (FIREBASE_DB_URL.includes('SEU-PROJETO')) {
+    showConfigBanner('Você ainda não colocou a URL do seu Firebase no código (FIREBASE_DB_URL). Veja as instruções no topo do <script>.');
+    return;
+  }
   try {
-    const res = await fetch(API_URL);
+    const res = await fetch(`${FIREBASE_DB_URL}/${FAMILY_PATH}.json`);
     if (!res.ok) {
-      showConfigBanner();
+      showConfigBanner('Não foi possível acessar seu Firebase (URL errada ou regras de acesso bloqueando). Confira a URL e as regras do Realtime Database.');
     }
   } catch (e) {
-    // erro de rede pontual não significa ID inválido; não mostra o banner por causa disso
-    console.warn('Não foi possível validar o Pantry ID agora:', e);
+    // erro de rede pontual não significa configuração inválida; não mostra o banner por causa disso
+    console.warn('Não foi possível validar o Firebase agora:', e);
   }
 }
 
-function showConfigBanner() {
+function showConfigBanner(message) {
   if (document.getElementById('configBanner')) return;
   const banner = document.createElement('div');
   banner.id = 'configBanner';
   banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:4000;background:#c23152;color:#fff;padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top));font-size:12px;text-align:center;line-height:1.5';
-  banner.innerHTML = '⚠️ O PANTRY_ID deste app parece inválido ou inexistente. Crie o seu em <strong>getpantry.cloud</strong> e substitua a linha PANTRY_ID no código. <button id="closeBanner" style="margin-left:8px;background:#fff;color:#c23152;border:none;border-radius:6px;padding:4px 10px;font-weight:700">Entendi</button>';
+  banner.innerHTML = `⚠️ ${escapeHtml(message)} <button id="closeBanner" style="margin-left:8px;background:#fff;color:#c23152;border:none;border-radius:6px;padding:4px 10px;font-weight:700">Entendi</button>`;
   document.body.appendChild(banner);
   document.getElementById('closeBanner').onclick = () => banner.remove();
 }
@@ -354,7 +367,7 @@ function createMarker(lat, lng, name, color, isMe, offline) {
 
 function startSync() {
   syncInterval = setInterval(() => {
-    if (Date.now() < coolDownUntil) return; // em cooldown por causa de 429, não bate mais na API agora
+    if (Date.now() < coolDownUntil) return; // em cooldown por erro/limite recente, não bate mais na API agora
     if (myLatLng) updateMyPosition();
     fetchAllMembers();
   }, SYNC_INTERVAL_MS);
@@ -376,8 +389,8 @@ function handleRateLimit(res) {
   return false;
 }
 
-// Grava (faz merge) só a MINHA posição no basket compartilhado, sem apagar a dos outros membros.
-// Usa PUT, que no Pantry Cloud atualiza/mescla chaves no JSON existente (POST substituiria o basket inteiro).
+// Grava só a MINHA posição no meu próprio "caminho" dentro do Realtime Database do Firebase
+// (ex: /familias/OUXE2026/member_123.json), sem tocar no caminho de nenhum outro membro.
 async function updateMyPosition() {
   if (!myLatLng || !myMemberId) return;
 
@@ -389,29 +402,13 @@ async function updateMyPosition() {
   };
 
   try {
-    const res = await fetch(`${API_URL}/basket/${BASKET_NAME}`, {
+    const res = await fetch(`${FIREBASE_DB_URL}/${FAMILY_PATH}/${myMemberId}.json`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ [myMemberId]: myData })
+      body: JSON.stringify(myData)
     });
     if (handleRateLimit(res)) return;
-    if (!res.ok) {
-      if (res.status === 400 && !basketExists) {
-        // Basket ainda não existe: cria com a minha posição já dentro (Pantry não aceita basket vazio)
-        const createRes = await fetch(`${API_URL}/basket/${BASKET_NAME}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ [myMemberId]: myData })
-        });
-        if (handleRateLimit(createRes)) return;
-        if (!createRes.ok) throw new Error('HTTP ' + createRes.status);
-        basketExists = true;
-      } else {
-        throw new Error('HTTP ' + res.status);
-      }
-    } else {
-      basketExists = true;
-    }
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     onSyncSuccess();
   } catch (e) {
     console.error('Erro ao enviar posição:', e);
@@ -421,21 +418,12 @@ async function updateMyPosition() {
 
 async function fetchAllMembers() {
   try {
-    const response = await fetch(`${API_URL}/basket/${BASKET_NAME}`);
+    const response = await fetch(`${FIREBASE_DB_URL}/${FAMILY_PATH}.json`);
     if (handleRateLimit(response)) return;
-    if (!response.ok) {
-      if (response.status !== 400) {
-        throw new Error('HTTP ' + response.status);
-      }
-      // Basket ainda não existe — normal antes da primeira posição ser enviada.
-      // updateMyPosition (chamado no mesmo ciclo) já cuida de criá-lo; não repetimos a chamada aqui.
-      onSyncError(true);
-      return;
-    }
+    if (!response.ok) throw new Error('HTTP ' + response.status);
 
     const data = await response.json();
-    basketExists = true;
-    members = data || {};
+    members = data || {}; // Firebase retorna "null" quando o caminho ainda não tem nada salvo
     updateAllMarkers();
     updateMemberList();
     onSyncSuccess();
@@ -461,7 +449,7 @@ function onSyncError(quiet) {
     const now = Date.now();
     if (!quiet && now - lastErrorToastAt > 15000) {
       lastErrorToastAt = now;
-      showToast('Falha ao sincronizar. Verifique sua internet ou o Pantry ID configurado.', true);
+      showToast('Falha ao sincronizar. Verifique sua internet ou a URL do Firebase configurada.', true);
     }
   } else {
     el.textContent = '🟡 Sincronizando...';
